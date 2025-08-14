@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
                 <div class="file-info">
                     <strong>${file.name}</strong>
-                    <span class="badge">${file.category}</span>
+                    <span class="badge" data-category="${file.category}">${file.category.replace('-', ' ')}</span>
                 </div>
             `;
             gallery.appendChild(card);
@@ -110,5 +110,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 </body>
 
 </html>
+
 
 
