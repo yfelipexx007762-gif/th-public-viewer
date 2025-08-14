@@ -34,82 +34,79 @@
 
     <!-- Nosso script para buscar e renderizar os dados -->
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const gallery = document.getElementById('gallery');
-            const loading = document.getElementById('loading');
-            const notFound = document.getElementById('not-found');
-            const projectCodeEl = document.getElementById('project-code');
+       document.addEventListener('DOMContentLoaded', () => {
+    const gallery = document.getElementById('gallery');
+    const loading = document.getElementById('loading');
+    const notFound = document.getElementById('not-found');
+    const projectCodeEl = document.getElementById('project-code');
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
-            const category = urlParams.get('category');
+    try {
+        // 1. LÊ OS DADOS DIRETAMENTE DO LINK (DA PARTE APÓS O '#')
+        const hash = window.location.hash.substring(1); // Pega "data=...."
+        if (!hash || !hash.startsWith('data=')) {
+            throw new Error('Dados não encontrados no link.');
+        }
 
-            if (!token) {
-                loading.style.display = 'none';
-                notFound.style.display = 'block';
-                return;
+        const encodedData = hash.substring(5); // Pega só a parte dos dados codificados
+
+        // 2. DECODIFICA OS DADOS DE VOLTA PARA O FORMATO ORIGINAL
+        // atob() reverte a codificação Base64
+        const decodedString = atob(encodedData);
+        const data = JSON.parse(decodedString);
+
+        // 3. VERIFICA SE OS DADOS SÃO VÁLIDOS
+        projectCodeEl.textContent = `Projeto ${data.projectCode}`;
+        if (!data.files || data.files.length === 0) {
+            throw new Error('Nenhum arquivo para exibir.');
+        }
+
+        loading.style.display = 'none';
+
+        // 4. RENDERIZA A GALERIA (O RESTO DO SEU CÓDIGO, INALTERADO)
+        data.files.forEach(file => {
+            const fileUrl = `${data.publicR2Url}/${file.url}`;
+            const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
+
+            const card = document.createElement('a');
+            card.href = fileUrl;
+            card.className = 'file-card glightbox';
+            card.setAttribute('data-gallery', 'project-gallery');
+            card.setAttribute('data-title', file.name);
+
+            if (!isImage) {
+                card.classList.remove('glightbox');
+                card.target = '_blank';
             }
-            
-            let apiUrl = `/api/projetos/public/anexos/${token}`;
-            if (category) {
-                apiUrl += `?category=${category}`;
-            }
 
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('Falha ao buscar dados.');
-                
-                const data = await response.json();
-                projectCodeEl.textContent = `Projeto ${data.projectCode}`;
-                
-                if (!data.files || data.files.length === 0) {
-                    loading.style.display = 'none';
-                    notFound.style.display = 'block';
-                    return;
-                }
-
-                loading.style.display = 'none';
-
-                data.files.forEach(file => {
-                    const fileUrl = `${data.publicR2Url}/${file.url}`;
-                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
-
-                    const card = document.createElement('a');
-                    card.href = fileUrl;
-                    card.className = 'file-card glightbox';
-                    card.setAttribute('data-gallery', 'project-gallery');
-                    card.setAttribute('data-title', file.name);
-
-                    if (!isImage) {
-                        card.classList.remove('glightbox');
-                        card.target = '_blank';
-                    }
-
-                    card.innerHTML = `
-                        <div class="thumbnail">
-                            ${isImage ? `<img src="${fileUrl}" alt="${file.name}">` : `<div class="icon">📄</div>`}
-                        </div>
-                        <div class="file-info">
-                            <strong>${file.name}</strong>
-                            <span class="badge">${file.category}</span>
-                        </div>
-                    `;
-                    gallery.appendChild(card);
-                });
-
-                const lightbox = GLightbox({
-                    selector: '.glightbox',
-                    touchNavigation: true,
-                    loop: true,
-                });
-
-            } catch (error) {
-                console.error("Erro:", error);
-                loading.style.display = 'none';
-                notFound.style.display = 'block';
-            }
+            card.innerHTML = `
+                <div class="thumbnail">
+                    ${isImage ? `<img src="${fileUrl}" alt="${file.name}">` : `<div class="icon">📄</div>`}
+                </div>
+                <div class="file-info">
+                    <strong>${file.name}</strong>
+                    <span class="badge">${file.category}</span>
+                </div>
+            `;
+            gallery.appendChild(card);
         });
+
+        // Inicializa a galeria de imagens
+        const lightbox = GLightbox({
+            selector: '.glightbox',
+            touchNavigation: true,
+            loop: true,
+        });
+
+    } catch (error) {
+        console.error("Erro ao processar o link:", error);
+        loading.style.display = 'none';
+        projectCodeEl.textContent = 'Erro';
+        notFound.textContent = error.message; // Mostra uma mensagem de erro mais clara
+        notFound.style.display = 'block';
+    }
+});
     </script>
 </body>
 
 </html>
+
