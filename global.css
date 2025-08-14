@@ -1,4 +1,4 @@
-/* public/css/global.css */
+/* global.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
@@ -102,4 +102,5 @@ body {
 /* --- RESPONSIVIDADE BÁSICA --- */
 @media (max-width: 992px) {
     .main-content { margin-left: 0; padding: 24px; }
+
 }
