@@ -34,39 +34,45 @@
 
     <!-- Nosso script para buscar e renderizar os dados -->
     <script>
-       document.addEventListener('DOMContentLoaded', () => {
+// ======================================================================
+// ========= SCRIPT COMPLETO PARA SUBSTITUIR EM anexos-publicos.html =========
+// ======================================================================
+document.addEventListener('DOMContentLoaded', async () => {
     const gallery = document.getElementById('gallery');
     const loading = document.getElementById('loading');
     const notFound = document.getElementById('not-found');
     const projectCodeEl = document.getElementById('project-code');
 
+    // ✅ SUBSTITUA PELA URL REAL DO SEU WORKER QUE VOCÊ ACABOU DE COPIAR
+    const workerUrl = 'https://erp-link-resolver.felipe-contatoo2006.workers.dev'; 
+
     try {
-        // 1. LÊ OS DADOS DIRETAMENTE DO LINK (DA PARTE APÓS O '#')
-        const hash = window.location.hash.substring(1); // Pega "data=...."
-        if (!hash || !hash.startsWith('data=')) {
-            throw new Error('Dados não encontrados no link.');
+        // 1. Pega a chave curta do link (ex: #aB3xZ7)
+        const key = window.location.hash.substring(1);
+        if (!key) {
+            throw new Error('Link inválido. Nenhum ID de compartilhamento encontrado.');
         }
 
-        const encodedData = hash.substring(5); // Pega só a parte dos dados codificados
+        // 2. Faz a chamada para o Worker buscar os dados no KV
+        const response = await fetch(`${workerUrl}?id=${key}`);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: 'Falha ao buscar os dados do link.' }));
+            throw new Error(errorData.error);
+        }
+        const data = await response.json();
 
-        // 2. DECODIFICA OS DADOS DE VOLTA PARA O FORMATO ORIGINAL
-        // atob() reverte a codificação Base64
-        const decodedString = atob(encodedData);
-        const data = JSON.parse(decodedString);
-
-        // 3. VERIFICA SE OS DADOS SÃO VÁLIDOS
+        // 3. Renderiza a galeria com os dados recebidos
         projectCodeEl.textContent = `Projeto ${data.projectCode}`;
         if (!data.files || data.files.length === 0) {
-            throw new Error('Nenhum arquivo para exibir.');
+            throw new Error('Nenhum arquivo para exibir neste link.');
         }
 
         loading.style.display = 'none';
 
-        // 4. RENDERIZA A GALERIA (O RESTO DO SEU CÓDIGO, INALTERADO)
+        // O resto do seu código de renderização, que já está perfeito
         data.files.forEach(file => {
             const fileUrl = `${data.publicR2Url}/${file.url}`;
             const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
-
             const card = document.createElement('a');
             card.href = fileUrl;
             card.className = 'file-card glightbox';
@@ -90,18 +96,13 @@
             gallery.appendChild(card);
         });
 
-        // Inicializa a galeria de imagens
-        const lightbox = GLightbox({
-            selector: '.glightbox',
-            touchNavigation: true,
-            loop: true,
-        });
+        const lightbox = GLightbox({ selector: '.glightbox' });
 
     } catch (error) {
-        console.error("Erro ao processar o link:", error);
+        console.error("Erro:", error);
         loading.style.display = 'none';
         projectCodeEl.textContent = 'Erro';
-        notFound.textContent = error.message; // Mostra uma mensagem de erro mais clara
+        notFound.textContent = error.message;
         notFound.style.display = 'block';
     }
 });
@@ -109,4 +110,5 @@
 </body>
 
 </html>
+
 
