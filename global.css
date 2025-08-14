@@ -1,0 +1,105 @@
+/* public/css/global.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Paleta de Cores Refinada */
+    --cor-fundo: #f9fafb;
+    --cor-superficie: #ffffff;
+    --cor-primaria: #4f46e5;
+    --cor-primaria-claro: #e0e7ff;
+    --cor-texto-principal: #111827;
+    --cor-texto-secundario: #6b7280;
+    --cor-borda: #e5e7eb;
+    --cor-sucesso: #10b981;
+    --cor-erro: #ef4444;
+    --cor-aviso: #f59e0b;
+
+    /* Efeitos e Dimensões */
+    --sombra-suave: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --sombra-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --sombra-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --raio-borda: 12px;
+    --transicao-padrao: all 0.2s ease-in-out;
+}
+
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto-principal);
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- LAYOUT PRINCIPAL --- */
+.app-layout { display: flex; }
+.main-content {
+    flex-grow: 1;
+    margin-left: 260px; /* Largura da sidebar */
+    padding: 32px 48px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+/* --- CABEÇALHO --- */
+.main-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 24px; margin-bottom: 32px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+.main-header h2 { font-size: 1.875rem; font-weight: 700; margin: 0; }
+.page-actions { display: flex; gap: 12px; }
+
+/* --- BOTÕES E MODAIS --- */
+.btn {
+    padding: 10px 16px; border-radius: 8px; border: 1px solid transparent;
+    font-weight: 600; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: var(--transicao-padrao);
+}
+.btn:hover { filter: brightness(95%); }
+.btn-primary { background-color: var(--cor-primaria); color: white; }
+.btn-secondary { background-color: var(--cor-superficie); color: var(--cor-texto-principal); border-color: var(--cor-borda); }
+.btn-success { background-color: var(--cor-sucesso); color: white; }
+.btn-danger { background-color: #dc2626; color: white; }
+.btn-sm { padding: 6px 12px; font-size: 0.875rem; border-radius: 6px; }
+
+/* --- MODAIS --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(17, 24, 39, 0.6); display: none;
+    justify-content: center; align-items: center; z-index: 2000;
+    backdrop-filter: blur(4px);
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+    background-color: var(--cor-superficie); padding: 32px; border-radius: var(--raio-borda);
+    max-width: 600px; width: 95%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-height: 90vh; overflow-y: auto;
+}
+.modal-content.modal-lg { max-width: 800px; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--cor-borda); }
+.modal-header h3 { margin: 0; font-size: 1.25rem; font-weight: 600; }
+.close-modal-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--cor-texto-secundario); }
+.modal-footer { margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px; }
+.cancel-modal-btn { /* Este seletor vem do seu HTML, vamos estilizá-lo como um botão secundário */
+    background-color: var(--cor-superficie); color: var(--cor-texto-principal); border: 1px solid var(--cor-borda);
+    padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;
+}
+
+/* --- FORMULÁRIOS --- */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.875rem; }
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--cor-borda);
+    border-radius: 8px; box-sizing: border-box; background-color: var(--cor-fundo);
+    transition: var(--transicao-padrao);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--cor-primaria); box-shadow: 0 0 0 3px var(--cor-primaria-claro); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+.form-group.full-width { grid-column: 1 / -1; }
+
+/* --- RESPONSIVIDADE BÁSICA --- */
+@media (max-width: 992px) {
+    .main-content { margin-left: 0; padding: 24px; }
+}

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anexos do Projeto</title>
+    
+    <!-- Link para a biblioteca da galeria -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+    
+    <!-- Link para o nosso novo CSS customizado -->
+    <link rel="stylesheet" href="/css/Cadastros/visualizador-anexos.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <!-- Adicione o caminho para a sua logo aqui -->
+            <img src="/img/LOGO TH PRETO.png" alt="Logo TH Transportes">
+            <h1 id="project-code">Carregando...</h1>
+            <p>Visualizador de Anexos</p>
+        </header>
+
+        <main>
+            <div id="loading">Carregando anexos, por favor aguarde...</div>
+            <div id="not-found" style="display: none;">Nenhum anexo encontrado ou o link é inválido.</div>
+            <div id="gallery">
+                <!-- Os cards de arquivos serão inseridos aqui pelo JavaScript -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Script da biblioteca da galeria -->
+    <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+
+    <!-- Nosso script para buscar e renderizar os dados -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const gallery = document.getElementById('gallery');
+            const loading = document.getElementById('loading');
+            const notFound = document.getElementById('not-found');
+            const projectCodeEl = document.getElementById('project-code');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const category = urlParams.get('category');
+
+            if (!token) {
+                loading.style.display = 'none';
+                notFound.style.display = 'block';
+                return;
+            }
+            
+            let apiUrl = `/api/projetos/public/anexos/${token}`;
+            if (category) {
+                apiUrl += `?category=${category}`;
+            }
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('Falha ao buscar dados.');
+                
+                const data = await response.json();
+                projectCodeEl.textContent = `Projeto ${data.projectCode}`;
+                
+                if (!data.files || data.files.length === 0) {
+                    loading.style.display = 'none';
+                    notFound.style.display = 'block';
+                    return;
+                }
+
+                loading.style.display = 'none';
+
+                data.files.forEach(file => {
+                    const fileUrl = `${data.publicR2Url}/${file.url}`;
+                    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
+
+                    const card = document.createElement('a');
+                    card.href = fileUrl;
+                    card.className = 'file-card glightbox';
+                    card.setAttribute('data-gallery', 'project-gallery');
+                    card.setAttribute('data-title', file.name);
+
+                    if (!isImage) {
+                        card.classList.remove('glightbox');
+                        card.target = '_blank';
+                    }
+
+                    card.innerHTML = `
+                        <div class="thumbnail">
+                            ${isImage ? `<img src="${fileUrl}" alt="${file.name}">` : `<div class="icon">📄</div>`}
+                        </div>
+                        <div class="file-info">
+                            <strong>${file.name}</strong>
+                            <span class="badge">${file.category}</span>
+                        </div>
+                    `;
+                    gallery.appendChild(card);
+                });
+
+                const lightbox = GLightbox({
+                    selector: '.glightbox',
+                    touchNavigation: true,
+                    loop: true,
+                });
+
+            } catch (error) {
+                console.error("Erro:", error);
+                loading.style.display = 'none';
+                notFound.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+/* ========================================================== */
+/* ARQUIVO: public/css/PaginasPublicas/visualizador-anexos.css */
+/* ========================================================== */
+
+/* Importa as variáveis e estilos base do seu sistema */
+@import url('/css/global.css');
+
+body {
+    /* Usa a cor de fundo padrão do seu ERP */
+    background-color: var(--cor-fundo);
+    padding: 32px;
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Estilo do Cabeçalho */
+.header {
+    text-align: center;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--cor-borda);
+    padding-bottom: 24px;
+}
+
+.header img {
+    height: 40px;
+    margin-bottom: 16px;
+}
+
+.header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--cor-texto-principal);
+    margin: 0;
+}
+
+.header p {
+    font-size: 1rem;
+    color: var(--cor-texto-secundario);
+    margin-top: 8px;
+}
+
+/* Galeria de Anexos */
+#gallery {
+    display: grid;
+    /* Cria um grid responsivo que se ajusta ao tamanho da tela */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* Card de Arquivo - Inspirado no seu item-card */
+.file-card {
+    background-color: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-borda);
+    box-shadow: var(--sombra-card);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: var(--transicao-padrao);
+}
+
+.file-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--sombra-card-hover);
+    border-color: var(--cor-primaria);
+}
+
+.thumbnail {
+    width: 100%;
+    height: 200px; /* Um pouco mais de espaço para as imagens */
+    background-color: var(--cor-fundo);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+}
+
+.thumbnail .icon {
+    font-size: 4em;
+    color: var(--cor-borda);
+}
+
+.file-info {
+    padding: 16px;
+    flex-grow: 1; /* Faz com que esta área ocupe o espaço restante */
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espaço entre o nome e o badge */
+}
+
+.file-info strong {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--cor-texto-principal);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-info .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 999px; /* Pílula */
+    width: fit-content;
+    background-color: var(--cor-primaria-claro);
+    color: var(--cor-primaria);
+}
+
+#loading, #not-found {
+    text-align: center;
+    padding: 60px;
+    font-size: 1.2em;
+    color: var(--cor-texto-secundario);
+}
