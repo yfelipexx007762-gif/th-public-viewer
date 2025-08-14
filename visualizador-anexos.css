@@ -3,7 +3,7 @@
 /* ========================================================== */
 
 /* Importa as variáveis e estilos base do seu sistema */
-@import url('/css/global.css');
+@import url('global.css');
 
 body {
     /* Usa a cor de fundo padrão do seu ERP */
@@ -128,3 +128,4 @@ body {
     color: var(--cor-texto-secundario);
 
 }
+
