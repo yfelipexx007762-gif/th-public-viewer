@@ -1,17 +1,39 @@
 /* ========================================================== */
-/* ARQUIVO: visualizador-anexos.css (VERSÃO MELHORADA) */
+/* ARQUIVO: visualizador-anexos.css (VERSÃO COMPLETA E CORRIGIDA) */
 /* ========================================================== */
 
-/* Importa as variáveis e estilos base do seu sistema */
-@import url('global.css');
+/* --- INÍCIO: Conteúdo do global.css COLADO AQUI --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --cor-fundo: #f9fafb;
+    --cor-superficie: #ffffff;
+    --cor-primaria: #4f46e5;
+    --cor-primaria-claro: #e0e7ff;
+    --cor-texto-principal: #111827;
+    --cor-texto-secundario: #6b7280;
+    --cor-borda: #e5e7eb;
+    --sombra-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --sombra-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --raio-borda: 12px;
+    --transicao-padrao: all 0.2s ease-in-out;
+}
+
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto-principal);
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+/* --- FIM: Conteúdo do global.css --- */
+
 
 /* --- ESTILOS GERAIS DA PÁGINA --- */
 body {
-    background-color: var(--cor-fundo);
-    /* Adiciona um preenchimento menor em telas pequenas */
     padding: 16px;
     box-sizing: border-box;
-    /* Melhora a transição de cores ao mudar de tema, se houver */
     transition: background-color 0.3s ease;
 }
 
@@ -29,25 +51,24 @@ body {
 }
 
 .header img {
-    /* Deixa a logo um pouco maior e adiciona uma sombra sutil */
     height: 50px;
     margin-bottom: 20px;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
 }
 
 .header h1 {
-    font-size: 2.25rem; /* Aumenta o tamanho do título */
-    font-weight: 800; /* Deixa a fonte mais forte (se a fonte Inter suportar) */
+    font-size: 2.25rem;
+    font-weight: 800;
     color: var(--cor-texto-principal);
     margin: 0;
     line-height: 1.2;
 }
 
 .header p {
-    font-size: 1.125rem; /* Aumenta o tamanho do subtítulo */
+    font-size: 1.125rem;
     color: var(--cor-texto-secundario);
     margin-top: 8px;
-    max-width: 600px; /* Evita que o texto fique muito largo em telas grandes */
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -55,9 +76,8 @@ body {
 /* --- GALERIA DE ANEXOS (MELHORIA PRINCIPAL) --- */
 #gallery {
     display: grid;
-    /* Grid responsivo aprimorado: em telas muito pequenas, fica com 1 coluna */
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 32px; /* Aumenta o espaçamento entre os cards */
+    gap: 32px;
 }
 
 /* Card de Arquivo - Efeitos e Detalhes Aprimorados */
@@ -72,41 +92,40 @@ body {
     flex-direction: column;
     overflow: hidden;
     transition: var(--transicao-padrao);
-    position: relative; /* Necessário para o efeito de overlay */
+    position: relative;
 }
 
 .file-card:hover {
-    transform: translateY(-5px); /* Efeito de "levantar" mais pronunciado */
+    transform: translateY(-5px);
     box-shadow: var(--sombra-card-hover);
     border-color: var(--cor-primaria);
 }
 
 .thumbnail {
     width: 100%;
-    height: 220px; /* Aumenta a altura para melhor visualização */
+    height: 220px;
     background-color: var(--cor-fundo);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     border-bottom: 1px solid var(--cor-borda);
-    position: relative; /* Para o ícone de zoom */
+    position: relative;
 }
 
 .thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease; /* Adiciona um efeito de zoom suave na imagem */
+    transition: transform 0.3s ease;
 }
 
 .file-card:hover .thumbnail img {
-    transform: scale(1.05); /* Efeito de zoom na imagem ao passar o mouse */
+    transform: scale(1.05);
 }
 
-/* Ícone de Zoom (para imagens) */
 .thumbnail::after {
-    content: '🔍'; /* Ícone de lupa */
+    content: '🔍';
     position: absolute;
     top: 50%;
     left: 50%;
@@ -125,12 +144,10 @@ body {
     backdrop-filter: blur(2px);
 }
 
-/* Mostra o ícone de zoom apenas em cards que são links de galeria (glightbox) */
 .file-card.glightbox:hover .thumbnail::after {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
 }
-
 
 .thumbnail .icon {
     font-size: 4rem;
@@ -143,11 +160,11 @@ body {
 }
 
 .file-info {
-    padding: 20px; /* Aumenta o espaçamento interno */
+    padding: 20px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Alinha o badge no final */
+    justify-content: space-between;
     gap: 12px;
 }
 
@@ -155,7 +172,6 @@ body {
     font-size: 1rem;
     font-weight: 600;
     color: var(--cor-texto-principal);
-    /* Permite que o nome do arquivo quebre em duas linhas se for muito grande */
     white-space: normal;
     overflow: hidden;
     display: -webkit-box;
@@ -164,19 +180,16 @@ body {
     line-height: 1.4;
 }
 
-/* Novo estilo para a categoria (badge) */
 .file-info .badge {
-    align-self: flex-start; /* Alinha o badge à esquerda */
+    align-self: flex-start;
     padding: 6px 12px;
     font-size: 0.75rem;
     font-weight: 600;
     border-radius: 999px;
     width: fit-content;
-    text-transform: capitalize; /* Deixa a primeira letra maiúscula */
-    /* Cores diferentes para cada categoria (exemplo) */
+    text-transform: capitalize;
 }
 
-/* Estilos de badge por categoria (opcional, mas dá um toque legal) */
 .badge[data-category="fotos-itens"] {
     background-color: #dbeafe; color: #1e40af;
 }
@@ -186,7 +199,6 @@ body {
 .badge[data-category="geral"] {
     background-color: #e5e7eb; color: #374151;
 }
-
 
 /* --- ESTADOS DE CARREGAMENTO E ERRO --- */
 #loading, #not-found {
@@ -200,7 +212,6 @@ body {
     gap: 16px;
 }
 
-/* Adiciona um spinner de carregamento animado */
 #loading::before {
     content: '';
     width: 40px;
@@ -212,38 +223,29 @@ body {
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+    to { transform: rotate(360deg); }
 }
-
 
 /* --- AJUSTES DE RESPONSIVIDADE PARA CELULAR --- */
 @media (max-width: 768px) {
     body {
-        padding: 16px; /* Menos padding em telas pequenas */
+        padding: 16px;
     }
-
     .header {
         margin-bottom: 32px;
         padding-bottom: 16px;
     }
-
     .header h1 {
-        font-size: 1.75rem; /* Título um pouco menor */
+        font-size: 1.75rem;
     }
-    
     .header p {
         font-size: 1rem;
     }
-
     #gallery {
-        /* Garante que os cards tenham no mínimo 250px, mas possam crescer */
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 16px; /* Menos espaçamento */
+        gap: 16px;
     }
-
     .thumbnail {
-        height: 180px; /* Thumbnail um pouco menor */
+        height: 180px;
     }
 }
