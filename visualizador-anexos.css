@@ -1,5 +1,5 @@
 /* ========================================================== */
-/* ARQUIVO: public/css/PaginasPublicas/visualizador-anexos.css */
+/* ARQUIVO: visualizador-anexos.css */
 /* ========================================================== */
 
 /* Importa as variáveis e estilos base do seu sistema */
@@ -126,4 +126,5 @@ body {
     padding: 60px;
     font-size: 1.2em;
     color: var(--cor-texto-secundario);
+
 }
