@@ -3,111 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anexos do Projeto</title>
+    <title>Anexos do Serviço</title>
 
-    <!-- Link para a biblioteca da galeria -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
-
-    <!-- Link para o nosso novo CSS customizado -->
     <link rel="stylesheet" href="visualizador-anexos.css">
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <!-- Adicione o caminho para a sua logo aqui -->
             <img src="/img/LOGO TH PRETO.png" alt="Logo TH Transportes">
-            <h1 id="project-code">Carregando...</h1>
+            <h1 id="service-code">Carregando...</h1>
             <p>Visualizador de Anexos</p>
         </header>
-
         <main>
             <div id="loading">Carregando anexos, por favor aguarde...</div>
-            <div id="not-found" style="display: none;">Nenhum anexo encontrado ou o link é inválido.</div>
-            <div id="gallery">
-                <!-- Os cards de arquivos serão inseridos aqui pelo JavaScript -->
-            </div>
+            <div id="not-found" style="display: none;"></div>
+            <div id="gallery"></div>
         </main>
     </div>
 
-    <!-- Script da biblioteca da galeria -->
     <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
 
-    <!-- Nosso script para buscar e renderizar os dados -->
+    <!-- SCRIPT CORRIGIDO FINAL -->
     <script>
-// ======================================================================
-// ========= SCRIPT COMPLETO PARA SUBSTITUIR EM anexos-publicos.html =========
-// ======================================================================
-document.addEventListener('DOMContentLoaded', async () => {
-    const gallery = document.getElementById('gallery');
-    const loading = document.getElementById('loading');
-    const notFound = document.getElementById('not-found');
-    const projectCodeEl = document.getElementById('project-code');
+    document.addEventListener('DOMContentLoaded', async () => {
+        const gallery = document.getElementById('gallery');
+        const loading = document.getElementById('loading');
+        const notFound = document.getElementById('not-found');
+        const serviceCodeEl = document.getElementById('service-code');
+        const workerUrl = 'https://erp-link-resolver.felipe-contatoo2006.workers.dev'; 
 
-    // ✅ SUBSTITUA PELA URL REAL DO SEU WORKER QUE VOCÊ ACABOU DE COPIAR
-    const workerUrl = 'https://erp-link-resolver.felipe-contatoo2006.workers.dev'; 
+        try {
+            const key = window.location.hash.substring(1);
+            if (!key) { throw new Error('Link inválido. Nenhum ID de compartilhamento encontrado.'); }
 
-    try {
-        // 1. Pega a chave curta do link (ex: #aB3xZ7)
-        const key = window.location.hash.substring(1);
-        if (!key) {
-            throw new Error('Link inválido. Nenhum ID de compartilhamento encontrado.');
-        }
-
-        // 2. Faz a chamada para o Worker buscar os dados no KV
-        const response = await fetch(`${workerUrl}?id=${key}`);
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: 'Falha ao buscar os dados do link.' }));
-            throw new Error(errorData.error);
-        }
-        const data = await response.json();
-
-        // 3. Renderiza a galeria com os dados recebidos
-        projectCodeEl.textContent = `Projeto ${data.projectCode}`;
-        if (!data.files || data.files.length === 0) {
-            throw new Error('Nenhum arquivo para exibir neste link.');
-        }
-
-        loading.style.display = 'none';
-
-        // O resto do seu código de renderização, que já está perfeito
-        data.files.forEach(file => {
-            const fileUrl = `${data.publicR2Url}/${file.url}`;
-            const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
-            const card = document.createElement('a');
-            card.href = fileUrl;
-            card.className = 'file-card glightbox';
-            card.setAttribute('data-gallery', 'project-gallery');
-            card.setAttribute('data-title', file.name);
-
-            if (!isImage) {
-                card.classList.remove('glightbox');
-                card.target = '_blank';
+            const response = await fetch(`${workerUrl}?id=${key}`);
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Falha ao buscar os dados do link.' }));
+                throw new Error(errorData.error);
+            }
+            const data = await response.json();
+            
+            // --- CORREÇÃO APLICADA AQUI ---
+            // Agora procuramos a propriedade 'codigo_projeto' no JSON recebido, em vez de 'projectCode'.
+            if (!data || !data.codigo_projeto) {
+                 throw new Error('Os dados recebidos do link compartilhado são inválidos.');
             }
 
-            card.innerHTML = `
-                <div class="thumbnail">
-                    ${isImage ? `<img src="${fileUrl}" alt="${file.name}">` : `<div class="icon">📄</div>`}
-                </div>
-                <div class="file-info">
-                    <strong>${file.name}</strong>
-                    <span class="badge">${file.category}</span>
-                    <span class="badge" data-category="${file.category}">${file.category.replace('-', ' ')}</span>
-                </div>
-            `;
-            gallery.appendChild(card);
-        });
+            serviceCodeEl.textContent = `Serviço ${data.codigo_projeto}`;
+            if (!data.files || data.files.length === 0) { throw new Error('Nenhum arquivo para exibir neste link.'); }
 
-        const lightbox = GLightbox({ selector: '.glightbox' });
+            loading.style.display = 'none';
 
-    } catch (error) {
-        console.error("Erro:", error);
-        loading.style.display = 'none';
-        projectCodeEl.textContent = 'Erro';
-        notFound.textContent = error.message;
-        notFound.style.display = 'block';
-    }
-});
+            data.files.forEach(file => {
+                const fileUrl = `${data.publicR2Url}/${file.url}`;
+                const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
+                const card = document.createElement('a');
+                card.href = fileUrl;
+                card.className = 'file-card glightbox';
+                card.setAttribute('data-gallery', 'project-gallery');
+                card.setAttribute('data-title', file.name);
+
+                if (!isImage) {
+                    card.classList.remove('glightbox');
+                    card.target = '_blank';
+                }
+
+                card.innerHTML = `
+                    <div class="thumbnail">
+                        ${isImage ? `<img src="${fileUrl}" alt="${file.name}">` : `<div class="icon">📄</div>`}
+                    </div>
+                    <div class="file-info">
+                        <strong>${file.name}</strong>
+                        <span class="badge" data-category="${file.category}">${file.category.replace('-', ' ')}</span>
+                    </div>
+                `;
+                gallery.appendChild(card);
+            });
+            const lightbox = GLightbox({ selector: '.glightbox' });
+
+        } catch (error) {
+            console.error("Erro:", error);
+            loading.style.display = 'none';
+            serviceCodeEl.textContent = 'Erro ao Carregar';
+            notFound.textContent = error.message;
+            notFound.style.display = 'block';
+        }
+    });
     </script>
 </body>
-
 </html>
