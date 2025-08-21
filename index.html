@@ -3,86 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Título da página atualizado -->
     <title>Anexos do Serviço</title>
-    
-    <!-- Link para a biblioteca da galeria (inalterado) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
-    
-    <!-- Link para o seu CSS customizado (inalterado) -->
     <link rel="stylesheet" href="visualizador-anexos.css">
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <!-- Caminho para a sua logo (inalterado) -->
             <img src="/img/LOGO TH PRETO.png" alt="Logo TH Transportes">
-            <!-- ID e texto atualizados -->
             <h1 id="service-code">Carregando...</h1>
             <p>Visualizador de Anexos</p>
         </header>
-
         <main>
             <div id="loading">Carregando anexos, por favor aguarde...</div>
-            <div id="not-found" style="display: none;">Nenhum anexo encontrado ou o link é inválido.</div>
-            <div id="gallery">
-                <!-- Os cards de arquivos serão inseridos aqui -->
-            </div>
+            <div id="not-found" style="display: none;"></div>
+            <div id="gallery"></div>
         </main>
     </div>
 
-    <!-- Script da biblioteca da galeria (inalterado) -->
     <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
 
-    <!-- SCRIPT CORRIGIDO E ATUALIZADO -->
+    <!-- SCRIPT FINAL E CORRIGIDO -->
     <script>
     document.addEventListener('DOMContentLoaded', async () => {
-        // Seletores de elementos do DOM
         const gallery = document.getElementById('gallery');
         const loading = document.getElementById('loading');
         const notFound = document.getElementById('not-found');
-        // Seletor do título atualizado
         const serviceCodeEl = document.getElementById('service-code');
 
-        // URL do seu Cloudflare Worker. Verifique se está correta.
         const workerUrl = 'https://erp-link-resolver.felipe-contatoo2006.workers.dev'; 
 
         try {
-            // 1. Pega a chave curta do link da URL (ex: aB3xZ7 de #aB3xZ7)
+            // 1. Pega a chave curta e simples do link (ex: #aB3xZ7)
             const key = window.location.hash.substring(1);
             if (!key) {
-                throw new Error('Link inválido ou expirado. Nenhum código de compartilhamento foi encontrado.');
+                throw new Error('Link inválido. Nenhum ID de compartilhamento foi encontrado.');
             }
 
-            // 2. Chama o Worker para buscar os dados no KV
+            // 2. Faz a chamada para o Worker buscar os dados no KV
             const response = await fetch(`${workerUrl}?id=${key}`);
-            
-            // Tratamento de erro aprimorado
             if (!response.ok) {
-                // Tenta ler uma mensagem de erro do Worker, senão usa uma padrão
-                const errorData = await response.json().catch(() => ({ error: `O servidor respondeu com um erro (${response.status}).` }));
-                throw new Error(errorData.error || `Falha ao buscar os dados do link. Status: ${response.status}`);
+                const errorData = await response.json().catch(() => ({ error: 'Falha ao buscar os dados do link. O servidor pode estar indisponível.' }));
+                throw new Error(errorData.error);
             }
-            
             const data = await response.json();
-
-            // Validação dos dados recebidos do Worker
-            if (!data || !data.projectCode) {
-                throw new Error('Os dados recebidos do link compartilhado são inválidos.');
+            
+            // Adicionada uma validação mais específica dos dados recebidos
+            if (!data || typeof data !== 'object' || !data.projectCode) {
+                 throw new Error('Os dados recebidos do link compartilhado são inválidos ou estão corrompidos.');
             }
 
-            // 3. Renderiza o título e a galeria com os dados recebidos
-            // ATUALIZADO para "Serviço"
+            // 3. Renderiza a galeria com os dados recebidos
             serviceCodeEl.textContent = `Serviço ${data.projectCode}`;
-
             if (!data.files || data.files.length === 0) {
                 throw new Error('Não há arquivos para exibir neste link.');
             }
 
-            // Esconde a mensagem de "carregando"
             loading.style.display = 'none';
 
-            // Loop para criar os cards de cada anexo (lógica inalterada)
+            // Lógica de renderização (inalterada, pois estava correta)
             data.files.forEach(file => {
                 const fileUrl = `${data.publicR2Url}/${file.url}`;
                 const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
@@ -109,14 +88,12 @@
                 gallery.appendChild(card);
             });
 
-            // Inicializa a galeria lightbox após adicionar os elementos
             const lightbox = GLightbox({ selector: '.glightbox' });
 
         } catch (error) {
-            // Bloco de erro aprimorado para exibir mensagens mais claras
-            console.error("Erro ao carregar anexos públicos:", error);
+            console.error("Erro:", error);
             loading.style.display = 'none';
-            serviceCodeEl.textContent = 'Erro ao Carregar'; // Título de erro
+            serviceCodeEl.textContent = 'Erro ao Carregar';
             notFound.textContent = error.message;
             notFound.style.display = 'block';
         }
